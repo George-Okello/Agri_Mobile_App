@@ -28,7 +28,7 @@ class _WeatherCardState extends State<WeatherCard>
     super.initState();
     
     _backgroundController = AnimationController(
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 25),
       vsync: this,
     )..repeat();
     
@@ -38,7 +38,7 @@ class _WeatherCardState extends State<WeatherCard>
     )..forward();
     
     _pulseController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat(reverse: true);
     
@@ -50,7 +50,7 @@ class _WeatherCardState extends State<WeatherCard>
       CurvedAnimation(parent: _cardController, curve: Curves.elasticOut),
     );
     
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
@@ -67,7 +67,7 @@ class _WeatherCardState extends State<WeatherCard>
     showDialog(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
       builder: (BuildContext context) {
         return DailyWeatherModal(
           forecast: forecast,
@@ -88,21 +88,22 @@ class _WeatherCardState extends State<WeatherCard>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                transform: GradientRotation(_backgroundAnimation.value * 2 * 3.14159),
+                transform: GradientRotation(_backgroundAnimation.value * 0.5),
                 colors: const [
-                  Color(0xFF1a237e), // Deep blue
-                  Color(0xFF3949ab), // Indigo
-                  Color(0xFF5e35b1), // Deep purple
-                  Color(0xFF7e57c2), // Purple
-                  Color(0xFF2e7d32), // Forest green (agriculture theme)
-                  Color(0xFF388e3c), // Green
+                  Color(0xFF0D4F3C), // Deep forest green
+                  Color(0xFF1B5E20), // Dark green
+                  Color(0xFF2E7D32), // Forest green
+                  Color(0xFF388E3C), // Medium green
+                  Color(0xFF4A5C16), // Olive green
+                  Color(0xFF33691E), // Light forest green
+                  Color(0xFF689F38), // Agriculture green
                 ],
               ),
             ),
             child: Stack(
               children: [
-                // Animated particles background
-                ...List.generate(30, (index) => _buildFloatingParticle(index)),
+                // Subtle floating particles
+                ...List.generate(15, (index) => _buildFloatingParticle(index)),
                 
                 // Main content
                 SafeArea(
@@ -137,8 +138,8 @@ class _WeatherCardState extends State<WeatherCard>
   }
 
   Widget _buildFloatingParticle(int index) {
-    final size = (index % 3 + 1) * 2.0;
-    final speed = (index % 4 + 1) * 0.5;
+    final size = (index % 2 + 1) * 1.5;
+    final speed = (index % 3 + 1) * 0.4;
     
     return AnimatedBuilder(
       animation: _backgroundAnimation,
@@ -148,19 +149,19 @@ class _WeatherCardState extends State<WeatherCard>
         final screenWidth = MediaQuery.of(context).size.width;
         
         return Positioned(
-          left: (index * 37) % screenWidth,
+          left: (index * 45) % screenWidth,
           top: screenHeight * progress - 50,
           child: Container(
             width: size,
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.08),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
-                  blurRadius: 10,
-                  spreadRadius: 2,
+                  color: Colors.white.withValues(alpha: 0.05),
+                  blurRadius: 6,
+                  spreadRadius: 1,
                 ),
               ],
             ),
@@ -178,71 +179,78 @@ class _WeatherCardState extends State<WeatherCard>
           scale: _cardAnimation.value,
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.25),
-                  Colors.white.withOpacity(0.1),
+                  Colors.white.withValues(alpha: 0.18),
+                  Colors.white.withValues(alpha: 0.08),
                 ],
               ),
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.25),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 25,
+                  offset: const Offset(0, 8),
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
-                  blurRadius: 30,
-                  offset: const Offset(0, -10),
+                  color: Colors.white.withValues(alpha: 0.1),
+                  blurRadius: 25,
+                  offset: const Offset(0, -8),
                 ),
               ],
             ),
             child: Column(
               children: [
-                // Location with premium styling
+                // Location with agricultural branding
                 AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, child) {
                     return Transform.scale(
                       scale: _pulseAnimation.value,
                       child: Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Colors.green.withOpacity(0.3),
-                              Colors.blue.withOpacity(0.2),
+                              const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                              const Color(0xFF2E7D32).withValues(alpha: 0.2),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(22),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.4),
-                            width: 2,
+                            color: Colors.white.withValues(alpha: 0.35),
+                            width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 3,
+                              color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
+                              blurRadius: 15,
+                              spreadRadius: 2,
                             ),
                           ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
-                              Icons.agriculture,
-                              color: Colors.white,
-                              size: 28,
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.agriculture,
+                                color: Colors.white,
+                                size: 24,
+                              ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -253,33 +261,33 @@ class _WeatherCardState extends State<WeatherCard>
                                     widget.weather.cityName,
                                     style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w300,
+                                      fontWeight: FontWeight.w600,
                                       color: Colors.white,
-                                      letterSpacing: 0.8,
+                                      letterSpacing: 0.5,
                                       height: 1.2,
                                     ),
                                     textAlign: TextAlign.center,
-                                    maxLines: 3,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.15),
+                                      color: Colors.white.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         width: 0.5,
                                       ),
                                     ),
                                     child: const Text(
-                                      'Agricultural Station',
+                                      'Farm Weather Station',
                                       style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 11,
                                         color: Colors.white70,
-                                        fontWeight: FontWeight.w400,
-                                        letterSpacing: 0.5,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.3,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -296,7 +304,7 @@ class _WeatherCardState extends State<WeatherCard>
                 
                 const SizedBox(height: 32),
                 
-                // Temperature display with animation
+                // Temperature display
                 TweenAnimationBuilder<double>(
                   duration: const Duration(milliseconds: 1200),
                   tween: Tween(begin: 0, end: widget.weather.temperature),
@@ -304,10 +312,10 @@ class _WeatherCardState extends State<WeatherCard>
                     return Text(
                       '${value.round()}°',
                       style: const TextStyle(
-                        fontSize: 96,
-                        fontWeight: FontWeight.w100,
+                        fontSize: 88,
+                        fontWeight: FontWeight.w200,
                         color: Colors.white,
-                        height: 0.8,
+                        height: 0.9,
                       ),
                     );
                   },
@@ -316,17 +324,28 @@ class _WeatherCardState extends State<WeatherCard>
                 const SizedBox(height: 8),
                 
                 // Weather description
-                Text(
-                  WeatherIcons.getWeatherDescription(widget.weather.weatherCode),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white70,
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 0.5,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    WeatherIcons.getWeatherDescription(widget.weather.weatherCode),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 
                 // Feels like and high/low
                 Row(
@@ -335,23 +354,23 @@ class _WeatherCardState extends State<WeatherCard>
                     Text(
                       'Feels like ${widget.weather.apparentTemperature.round()}°',
                       style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white60,
-                        fontWeight: FontWeight.w300,
+                        fontSize: 15,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       width: 1,
-                      height: 20,
-                      color: Colors.white.withOpacity(0.3),
+                      height: 16,
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                     Text(
                       'H:${widget.weather.temperatureMax.round()}° L:${widget.weather.temperatureMin.round()}°',
                       style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white60,
-                        fontWeight: FontWeight.w300,
+                        fontSize: 15,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -359,30 +378,30 @@ class _WeatherCardState extends State<WeatherCard>
                 
                 const SizedBox(height: 24),
                 
-                // Animated weather icon
+                // Weather icon
                 AnimatedBuilder(
                   animation: _pulseAnimation,
                   builder: (context, child) {
                     return Transform.scale(
-                      scale: 0.8 + (_pulseAnimation.value * 0.2),
+                      scale: 0.85 + (_pulseAnimation.value * 0.15),
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.white.withOpacity(0.2),
-                              Colors.white.withOpacity(0.05),
+                              Colors.white.withValues(alpha: 0.15),
+                              Colors.white.withValues(alpha: 0.05),
                             ],
                           ),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
+                            color: Colors.white.withValues(alpha: 0.25),
+                            width: 1.5,
                           ),
                         ),
                         child: Icon(
                           WeatherIcons.getWeatherIcon(widget.weather.weatherCode),
-                          size: 64,
+                          size: 56,
                           color: Colors.white,
                         ),
                       ),
@@ -406,20 +425,20 @@ class _WeatherCardState extends State<WeatherCard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -432,26 +451,26 @@ class _WeatherCardState extends State<WeatherCard>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.green.withOpacity(0.3),
-                      Colors.green.withOpacity(0.1),
+                      const Color(0xFF4CAF50).withValues(alpha: 0.25),
+                      const Color(0xFF2E7D32).withValues(alpha: 0.15),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
-                  Icons.grass,
+                  Icons.eco,
                   color: Colors.white,
-                  size: 24,
+                  size: 22,
                 ),
               ),
               const SizedBox(width: 16),
               const Text(
-                'Agricultural Conditions',
+                'Soil & Environmental Data',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -465,7 +484,7 @@ class _WeatherCardState extends State<WeatherCard>
                   title: 'Soil Temperature',
                   value: '${widget.weather.soilTemperature0cm.round()}°C',
                   subtitle: 'Surface layer',
-                  color: Colors.orange.withOpacity(0.3),
+                  color: const Color(0xFFFF7043).withValues(alpha: 0.25),
                 ),
               ),
               const SizedBox(width: 16),
@@ -475,7 +494,7 @@ class _WeatherCardState extends State<WeatherCard>
                   title: 'Soil Moisture',
                   value: '${(widget.weather.soilMoisture0to1cm * 100).round()}%',
                   subtitle: '0-1cm depth',
-                  color: Colors.blue.withOpacity(0.3),
+                  color: const Color(0xFF42A5F5).withValues(alpha: 0.25),
                 ),
               ),
             ],
@@ -486,20 +505,20 @@ class _WeatherCardState extends State<WeatherCard>
               Expanded(
                 child: _buildPremiumFarmTile(
                   icon: Icons.eco,
-                  title: 'Nature’s Breath',
+                  title: 'Evapotranspiration',
                   value: '${widget.weather.evapotranspiration.toStringAsFixed(1)}mm',
                   subtitle: 'Water loss rate',
-                  color: Colors.green.withOpacity(0.3),
+                  color: const Color(0xFF66BB6A).withValues(alpha: 0.25),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _buildPremiumFarmTile(
                   icon: Icons.wb_sunny,
-                  title: 'Daylight Hours',
+                  title: 'Growing Hours',
                   value: '${(widget.weather.daylightDuration / 3600).toStringAsFixed(1)}h',
-                  subtitle: 'Growing period',
-                  color: Colors.yellow.withOpacity(0.3),
+                  subtitle: 'Daylight period',
+                  color: const Color(0xFFFFCA28).withValues(alpha: 0.25),
                 ),
               ),
             ],
@@ -517,19 +536,19 @@ class _WeatherCardState extends State<WeatherCard>
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             color,
-            color.withOpacity(0.1),
+            color.withValues(alpha: 0.1),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -538,15 +557,15 @@ class _WeatherCardState extends State<WeatherCard>
           Icon(
             icon,
             color: Colors.white,
-            size: 28,
+            size: 26,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
             title,
             style: const TextStyle(
               fontSize: 12,
               color: Colors.white70,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -554,8 +573,8 @@ class _WeatherCardState extends State<WeatherCard>
           Text(
             value,
             style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
@@ -566,7 +585,7 @@ class _WeatherCardState extends State<WeatherCard>
             style: const TextStyle(
               fontSize: 10,
               color: Colors.white60,
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w400,
             ),
             textAlign: TextAlign.center,
           ),
@@ -581,13 +600,13 @@ class _WeatherCardState extends State<WeatherCard>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -602,7 +621,7 @@ class _WeatherCardState extends State<WeatherCard>
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -615,7 +634,7 @@ class _WeatherCardState extends State<WeatherCard>
                 const Text(
                   'Hourly Forecast',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
@@ -644,13 +663,13 @@ class _WeatherCardState extends State<WeatherCard>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white.withOpacity(index == 0 ? 0.3 : 0.15),
-                        Colors.white.withOpacity(index == 0 ? 0.2 : 0.05),
+                        Colors.white.withValues(alpha: index == 0 ? 0.25 : 0.12),
+                        Colors.white.withValues(alpha: index == 0 ? 0.15 : 0.04),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withOpacity(index == 0 ? 0.4 : 0.2),
+                      color: Colors.white.withValues(alpha: index == 0 ? 0.3 : 0.15),
                       width: 1,
                     ),
                   ),
@@ -661,7 +680,7 @@ class _WeatherCardState extends State<WeatherCard>
                         index == 0 ? 'Now' : timeFormat,
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -681,7 +700,7 @@ class _WeatherCardState extends State<WeatherCard>
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                         decoration: BoxDecoration(
-                          color: Colors.lightBlueAccent.withOpacity(0.3),
+                          color: const Color(0xFF42A5F5).withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -711,13 +730,13 @@ class _WeatherCardState extends State<WeatherCard>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -728,20 +747,20 @@ class _WeatherCardState extends State<WeatherCard>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
                   Icons.analytics,
                   color: Colors.white,
-                  size: 24,
+                  size: 22,
                 ),
               ),
               const SizedBox(width: 16),
               const Text(
-                'Environmental Data',
+                'Environmental Conditions',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -756,7 +775,7 @@ class _WeatherCardState extends State<WeatherCard>
                   icon: Icons.air,
                   title: 'Wind Speed',
                   value: '${widget.weather.windSpeed.toStringAsFixed(1)} km/h',
-                  color: Colors.cyan.withOpacity(0.3),
+                  color: const Color(0xFF26C6DA).withValues(alpha: 0.25),
                 ),
               ),
               const SizedBox(width: 16),
@@ -765,7 +784,7 @@ class _WeatherCardState extends State<WeatherCard>
                   icon: Icons.water_drop,
                   title: 'Humidity',
                   value: '${widget.weather.humidity}%',
-                  color: Colors.blue.withOpacity(0.3),
+                  color: const Color(0xFF42A5F5).withValues(alpha: 0.25),
                 ),
               ),
             ],
@@ -778,7 +797,7 @@ class _WeatherCardState extends State<WeatherCard>
                   icon: Icons.wb_sunny,
                   title: 'UV Index',
                   value: widget.weather.uvIndex.toStringAsFixed(1),
-                  color: Colors.orange.withOpacity(0.3),
+                  color: const Color(0xFFFF7043).withValues(alpha: 0.25),
                 ),
               ),
               const SizedBox(width: 16),
@@ -787,7 +806,7 @@ class _WeatherCardState extends State<WeatherCard>
                   icon: Icons.compress,
                   title: 'Pressure',
                   value: '${widget.weather.pressure.round()} hPa',
-                  color: Colors.purple.withOpacity(0.3),
+                  color: const Color(0xFF8E24AA).withValues(alpha: 0.25),
                 ),
               ),
             ],
@@ -804,27 +823,27 @@ class _WeatherCardState extends State<WeatherCard>
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.1)],
+          colors: [color, color.withValues(alpha: 0.1)],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.white, size: 28),
+          Icon(icon, color: Colors.white, size: 26),
           const SizedBox(height: 8),
           Text(
             title,
             style: const TextStyle(
               fontSize: 12,
               color: Colors.white70,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
@@ -832,8 +851,8 @@ class _WeatherCardState extends State<WeatherCard>
           Text(
             value,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
@@ -850,13 +869,13 @@ class _WeatherCardState extends State<WeatherCard>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -868,20 +887,20 @@ class _WeatherCardState extends State<WeatherCard>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
                   Icons.calendar_month,
                   color: Colors.white,
-                  size: 24,
+                  size: 22,
                 ),
               ),
               const SizedBox(width: 16),
               const Text(
-                'Agricultural Forecast',
+                '7-Day Farm Forecast',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -905,18 +924,18 @@ class _WeatherCardState extends State<WeatherCard>
                   gradient: LinearGradient(
                     colors: [
                       isToday 
-                          ? Colors.green.withOpacity(0.4)
-                          : Colors.white.withOpacity(0.15),
+                          ? const Color(0xFF4CAF50).withValues(alpha: 0.3)
+                          : Colors.white.withValues(alpha: 0.12),
                       isToday 
-                          ? Colors.green.withOpacity(0.2)
-                          : Colors.white.withOpacity(0.05),
+                          ? const Color(0xFF2E7D32).withValues(alpha: 0.2)
+                          : Colors.white.withValues(alpha: 0.04),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isToday 
-                        ? Colors.green.withOpacity(0.5)
-                        : Colors.white.withOpacity(0.2),
+                        ? const Color(0xFF4CAF50).withValues(alpha: 0.4)
+                        : Colors.white.withValues(alpha: 0.15),
                     width: 1,
                   ),
                 ),
@@ -927,30 +946,30 @@ class _WeatherCardState extends State<WeatherCard>
                       child: Text(
                         isToday ? 'Today' : dayFormat,
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           color: Colors.white,
-                          fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+                          fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
                         ),
                       ),
                     ),
                     Icon(
                       WeatherIcons.getWeatherIcon(forecast.weatherCode),
-                      size: 24,
+                      size: 22,
                       color: Colors.white,
                     ),
                     const SizedBox(width: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.lightBlueAccent.withOpacity(0.3),
+                        color: const Color(0xFF42A5F5).withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         '${forecast.precipitationProbabilityMax.round()}%',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -958,7 +977,7 @@ class _WeatherCardState extends State<WeatherCard>
                     Text(
                       '${forecast.temperatureMin.round()}°',
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         color: Colors.white70,
                         fontWeight: FontWeight.w400,
                       ),
@@ -967,22 +986,22 @@ class _WeatherCardState extends State<WeatherCard>
                     Text(
                       '${forecast.temperatureMax.round()}°',
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.white.withOpacity(0.7),
-                      size: 20,
+                      color: Colors.white.withValues(alpha: 0.6),
+                      size: 18,
                     ),
                   ],
                 ),
               ),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 20),
           _buildSmartAnalyticsButton(),
         ],
@@ -995,7 +1014,7 @@ class _WeatherCardState extends State<WeatherCard>
       animation: _pulseAnimation,
       builder: (context, child) {
         return Transform.scale(
-          scale: 0.98 + (_pulseAnimation.value * 0.02),
+          scale: 0.99 + (_pulseAnimation.value * 0.01),
           child: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -1013,50 +1032,50 @@ class _WeatherCardState extends State<WeatherCard>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.green.withOpacity(0.4),
-                    Colors.blue.withOpacity(0.3),
-                    Colors.purple.withOpacity(0.2),
+                    const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                    const Color(0xFF2E7D32).withValues(alpha: 0.25),
+                    const Color(0xFF1B5E20).withValues(alpha: 0.2),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.4),
-                  width: 2,
+                  color: Colors.white.withValues(alpha: 0.3),
+                  width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.green.withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
+                    blurRadius: 15,
+                    offset: const Offset(0, 6),
                   ),
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, -4),
+                    color: Colors.white.withValues(alpha: 0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, -3),
                   ),
                 ],
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.white.withOpacity(0.3),
-                          Colors.white.withOpacity(0.1),
+                          Colors.white.withValues(alpha: 0.25),
+                          Colors.white.withValues(alpha: 0.1),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
                     child: const Icon(
-                      Icons.analytics,
+                      Icons.insights,
                       color: Colors.white,
-                      size: 28,
+                      size: 26,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -1065,19 +1084,19 @@ class _WeatherCardState extends State<WeatherCard>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Smart Farm Analytics Hub',
+                          'Farm Intelligence Hub',
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            letterSpacing: 0.5,
+                            letterSpacing: 0.3,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Advanced crop insights, irrigation planning, disease monitoring & yield forecasts',
+                          'Advanced crop analytics, irrigation planning & yield forecasting',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             color: Colors.white70,
                             fontWeight: FontWeight.w400,
                             height: 1.3,
@@ -1090,17 +1109,17 @@ class _WeatherCardState extends State<WeatherCard>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.25),
                         width: 1,
                       ),
                     ),
                     child: const Icon(
-                      Icons.arrow_forward_ios,
+                      Icons.trending_up,
                       color: Colors.white,
-                      size: 18,
+                      size: 16,
                     ),
                   ),
                 ],

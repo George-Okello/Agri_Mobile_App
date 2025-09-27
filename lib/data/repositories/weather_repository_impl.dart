@@ -60,7 +60,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
       cacheService.cacheEnhanced(lat, lon, weatherModel);
       
       return Right(weatherModel);
-    } on ServerFailure catch (failure) {
+    } on ServerFailure {
       // Fallback to basic weather if enhanced fails
       return await getWeather(lat, lon);
     } on NetworkFailure catch (failure) {

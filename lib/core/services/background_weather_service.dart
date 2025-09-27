@@ -117,11 +117,11 @@ class RobustWeatherService {
     try {
       return await primaryOperation();
     } catch (e) {
-      print('Primary operation failed: $e');
+      // print('Primary operation failed: $e');
       try {
         return await fallbackOperation();
       } catch (e2) {
-        print('Fallback operation failed: $e2');
+        // print('Fallback operation failed: $e2');
         rethrow;
       }
     }

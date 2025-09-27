@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../../domain/entities/weather_entity.dart';
-import '../widgets/weather_icons.dart';
-import '../../core/utils/agricultural_calculations.dart';
 import 'tabs/crop_growth_tab.dart';
 import 'tabs/irrigation_tab.dart';
 import 'tabs/disease_risk_tab.dart';
@@ -102,7 +98,7 @@ class _EnhancedWeatherGraphsPageState extends State<EnhancedWeatherGraphsPage>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.agriculture, color: Colors.white, size: 24),
@@ -116,21 +112,22 @@ class _EnhancedWeatherGraphsPageState extends State<EnhancedWeatherGraphsPage>
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
       ),
       child: TabBar(
         controller: _tabController,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(25),
         ),
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white70,
         labelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
         isScrollable: true,
+        dividerColor: Colors.transparent,
         tabs: const [
           Tab(text: 'Crop Growth'),
           Tab(text: 'Irrigation'),

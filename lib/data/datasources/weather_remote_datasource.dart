@@ -24,39 +24,30 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   Future<WeatherModel> getWeather(double lat, double lon) async {
     try {
       final cityName = await getCityName(lat, lon);
-      
-      // Only verified OpenMeteo parameters
+
       final url = Uri.parse(
         '${AppConstants.baseUrl}/forecast?'
         'latitude=$lat&longitude=$lon&'
         'forecast_days=16&'
-        // Current weather - verified parameters only
         'current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,'
         'weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,uv_index&'
-        // Hourly data - basic verified parameters
         'hourly=temperature_2m,relative_humidity_2m,precipitation,precipitation_probability,'
         'weather_code,wind_speed_10m,uv_index&'
-        // Daily data - only confirmed parameters
         'daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,'
         'apparent_temperature_min,sunrise,sunset,uv_index_max,precipitation_sum,'
         'precipitation_probability_max,wind_speed_10m_max&'
         'timezone=auto',
       );
 
-      print('API URL: $url');
-
       final response = await client.get(url);
-      print('Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         return WeatherModel.fromJson(jsonResponse, cityName);
       } else {
-        print('Error response body: ${response.body}');
         throw ServerFailure('API Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('Exception: $e');
       throw ServerFailure('Failed to fetch weather data: $e');
     }
   }
@@ -64,7 +55,6 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   @override
   Future<WeatherModel> getEnhancedWeather(double lat, double lon) async {
     try {
-      // Fetch all data concurrently for better performance
       final futures = await Future.wait([
         _getWeatherForecast(lat, lon),
         getHistoricalWeather(lat, lon).catchError((e) => <String, dynamic>{}),
@@ -73,14 +63,14 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         getSoilData(lat, lon).catchError((e) => <String, dynamic>{}),
         getCityName(lat, lon),
       ]);
-      
+
       final weatherData = futures[0] as Map<String, dynamic>;
       final historicalData = futures[1] as Map<String, dynamic>;
       final airQualityData = futures[2] as Map<String, dynamic>;
       final elevation = futures[3] as double;
       final soilData = futures[4] as Map<String, dynamic>;
       final cityName = futures[5] as String;
-      
+
       return WeatherModel.fromEnhancedJson(
         weatherData,
         historicalData,
@@ -90,8 +80,6 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         cityName,
       );
     } catch (e) {
-      print('Enhanced weather fetch failed: $e');
-      // Fallback to basic weather if enhanced fails
       return await getWeather(lat, lon);
     }
   }
@@ -112,7 +100,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
     );
 
     final response = await client.get(url);
-    
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -125,7 +113,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
     try {
       final endDate = DateTime.now().subtract(const Duration(days: 1));
       final startDate = endDate.subtract(const Duration(days: 365));
-      
+
       final url = Uri.parse(
         'https://archive-api.open-meteo.com/v1/archive?'
         'latitude=$lat&longitude=$lon&'
@@ -136,14 +124,13 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
       );
 
       final response = await client.get(url);
-      
+
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
         throw ServerFailure('Historical weather API Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Historical weather fetch failed: $e');
       throw ServerFailure('Failed to fetch historical weather data: $e');
     }
   }
@@ -159,14 +146,13 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
       );
 
       final response = await client.get(url);
-      
+
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
         throw ServerFailure('Air quality API Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Air quality fetch failed: $e');
       throw ServerFailure('Failed to fetch air quality data: $e');
     }
   }
@@ -180,7 +166,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
       );
 
       final response = await client.get(url);
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return data['elevation'][0]?.toDouble() ?? 0.0;
@@ -188,8 +174,7 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         throw ServerFailure('Elevation API Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Elevation fetch failed: $e');
-      return 0.0; // Return default elevation on error
+      return 0.0;
     }
   }
 
@@ -206,14 +191,13 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
       );
 
       final response = await client.get(url);
-      
+
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
         throw ServerFailure('Soil data API Error ${response.statusCode}');
       }
     } catch (e) {
-      print('Soil data fetch failed: $e');
       throw ServerFailure('Failed to fetch soil data: $e');
     }
   }
@@ -221,43 +205,35 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
   @override
   Future<String> getCityName(double lat, double lon) async {
     try {
-      // Use a proper reverse geocoding service
-      // Option 1: Use OpenStreetMap Nominatim (free)
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?'
         'lat=$lat&lon=$lon&format=json&accept-language=en',
       );
 
-      print('Geocoding URL: $url');
-
       final response = await client.get(
         url,
         headers: {
-          'User-Agent': 'WeatherApp/1.0', // Required by Nominatim
+          'User-Agent': 'WeatherApp/1.0',
         },
       );
-      
-      print('Geocoding response status: ${response.statusCode}');
-      
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        print('Geocoding response: $jsonResponse');
-        
+
         final displayName = jsonResponse['display_name'] as String?;
         final address = jsonResponse['address'] as Map<String, dynamic>?;
-        
+
         if (address != null) {
-          // Extract city/town name and country
-          final city = address['city'] ?? 
-                      address['town'] ?? 
-                      address['village'] ?? 
-                      address['municipality'] ?? 
-                      address['county'] ?? '';
-          
+          final city = address['city'] ??
+              address['town'] ??
+              address['village'] ??
+              address['municipality'] ??
+              address['county'] ??
+              '';
+
           final state = address['state'] ?? '';
           final country = address['country'] ?? '';
-          
-          // Build city name with available data
+
           if (city.isNotEmpty) {
             if (state.isNotEmpty && country.isNotEmpty) {
               return '$city, $state, $country';
@@ -267,46 +243,41 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
               return city;
             }
           }
-          
-          // If no city found, try to use display name parts
+
           if (displayName != null && displayName.isNotEmpty) {
             final parts = displayName.split(', ');
             if (parts.length >= 2) {
-              return '${parts[0]}, ${parts[parts.length - 1]}'; // First part and country
+              return '${parts[0]}, ${parts[parts.length - 1]}';
             }
             return parts[0];
           }
         }
       }
-      
-      // If Nominatim fails, try alternative method
+
       return await _tryAlternativeGeocoding(lat, lon);
-      
     } catch (e) {
-      print('Geocoding exception: $e');
       return await _tryAlternativeGeocoding(lat, lon);
     }
   }
 
   Future<String> _tryAlternativeGeocoding(double lat, double lon) async {
     try {
-      // Option 2: Try using a different free geocoding service
-      // BigDataCloud offers free reverse geocoding
       final url = Uri.parse(
         'https://api.bigdatacloud.net/data/reverse-geocode-client?'
         'latitude=$lat&longitude=$lon&localityLanguage=en',
       );
 
       final response = await client.get(url);
-      
+
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        
-        final city = jsonResponse['city'] ?? 
-                    jsonResponse['locality'] ?? 
-                    jsonResponse['principalSubdivision'] ?? '';
+
+        final city = jsonResponse['city'] ??
+            jsonResponse['locality'] ??
+            jsonResponse['principalSubdivision'] ??
+            '';
         final country = jsonResponse['countryName'] ?? '';
-        
+
         if (city.isNotEmpty && country.isNotEmpty) {
           return '$city, $country';
         } else if (city.isNotEmpty) {
@@ -314,17 +285,16 @@ class WeatherRemoteDataSourceImpl implements WeatherRemoteDataSource {
         }
       }
     } catch (e) {
-      print('Alternative geocoding failed: $e');
+      // ignore
     }
-    
-    // Final fallback: return coordinates with proper formatting
+
     return _formatCoordinates(lat, lon);
   }
 
   String _formatCoordinates(double lat, double lon) {
     final latDirection = lat >= 0 ? 'N' : 'S';
     final lonDirection = lon >= 0 ? 'E' : 'W';
-    
+
     return '${lat.abs().toStringAsFixed(2)}°$latDirection, ${lon.abs().toStringAsFixed(2)}°$lonDirection';
   }
 }

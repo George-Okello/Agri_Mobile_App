@@ -41,10 +41,10 @@ class _LoadingWidgetState extends State<LoadingWidget>
       child: Container(
         padding: const EdgeInsets.all(32),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -60,7 +60,7 @@ class _LoadingWidgetState extends State<LoadingWidget>
                   child: Icon(
                     Icons.location_searching,
                     size: 48,
-                    color: Colors.white.withOpacity(0.8 + (_animation.value * 0.2)),
+                    color: Colors.white.withValues(alpha: 0.8 + (_animation.value * 0.2)),
                   ),
                 );
               },

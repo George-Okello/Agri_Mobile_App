@@ -74,7 +74,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       final result = await getWeatherUseCase(
         weather_usecase.WeatherParams(
           latitude: event.latitude, 
-          longitude: event.longitude
+          longitude: event.longitude,
         ),
       );
 
@@ -141,7 +141,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
       final result = await getEnhancedWeatherUseCase(
         weather_usecase.WeatherParams(
           latitude: event.latitude, 
-          longitude: event.longitude
+          longitude: event.longitude,
         ),
       );
 
@@ -170,7 +170,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     try {
       final params = weather_usecase.WeatherParams(
         latitude: event.latitude, 
-        longitude: event.longitude
+        longitude: event.longitude,
       );
 
       final result = event.enhanced 
@@ -196,14 +196,15 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     }
   }
 
+  /// ✅ Updated to use Dart 3 pattern matching
   String _mapFailureToMessage(Failure failure) {
-    switch (failure.runtimeType) {
-      case ServerFailure:
-        return (failure as ServerFailure).message;
-      case NetworkFailure:
-        return (failure as NetworkFailure).message;
-      case LocationFailure:
-        return (failure as LocationFailure).message;
+    switch (failure) {
+      case ServerFailure f:
+        return f.message;
+      case NetworkFailure f:
+        return f.message;
+      case LocationFailure f:
+        return f.message;
       default:
         return 'Unexpected error occurred';
     }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'core/dl/Injection.dart';
+import 'core/dl/_injection.dart';
 import 'presentation/pages/weather_page.dart';
 
 void main() async {
@@ -52,8 +52,8 @@ class AgriculturalWeatherApp extends StatelessWidget {
           systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         // Splash and highlight colors
-        splashColor: Colors.white.withOpacity(0.1),
-        highlightColor: Colors.white.withOpacity(0.05),
+        splashColor: Colors.white.withValues(alpha: 0.1),
+        highlightColor: Colors.white.withValues(alpha: 0.05),
       ),
       home: WeatherPage(),
     );

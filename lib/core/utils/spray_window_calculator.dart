@@ -182,7 +182,7 @@ class SprayWindowCalculator {
   
   // Check if conditions are suitable for specific spray types
   static Map<String, bool> getSprayTypeSuitability(DailyForecast forecast) {
-    final conditions = getSprayConditions(forecast);
+    getSprayConditions(forecast);
     final windSpeed = forecast.windSpeedMax;
     final rain = forecast.precipitationSum;
     final temp = forecast.temperatureMax;

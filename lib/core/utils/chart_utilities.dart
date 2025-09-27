@@ -33,15 +33,15 @@ class ChartUtilities {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          const Color(0xFF1B5E20).withOpacity(0.8), // Dark green
-          const Color(0xFF2E7D32).withOpacity(0.6), // Medium green
+          const Color(0xFF1B5E20).withValues(alpha: 0.8), // Dark green
+          const Color(0xFF2E7D32).withValues(alpha: 0.6), // Medium green
         ],
       ),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(color: const Color(0xFF81C784), width: 1.5), // Light green border
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.3),
+          color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
@@ -55,7 +55,7 @@ class ChartUtilities {
       drawVerticalLine: false,
       horizontalInterval: interval,
       getDrawingHorizontalLine: (value) => FlLine(
-        color: Colors.white.withOpacity(0.3),
+        color: Colors.white.withValues(alpha: 0.3),
         strokeWidth: 0.8,
       ),
     );
@@ -64,7 +64,7 @@ class ChartUtilities {
   static FlBorderData buildBorderData() {
     return FlBorderData(
       show: true,
-      border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
     );
   }
 
@@ -124,7 +124,7 @@ class ChartUtilities {
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
@@ -158,15 +158,15 @@ class ChartUtilities {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.8),
-            color.withOpacity(0.6),
+            color.withValues(alpha: 0.8),
+            color.withValues(alpha: 0.6),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -229,18 +229,18 @@ class ChartUtilities {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            statusColor.withOpacity(0.3),
-            statusColor.withOpacity(0.2),
+            statusColor.withValues(alpha: 0.3),
+            statusColor.withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: statusColor.withOpacity(0.6),
+          color: statusColor.withValues(alpha: 0.6),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -266,7 +266,7 @@ class ChartUtilities {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.4),
+                  color: statusColor.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -313,15 +313,15 @@ class ChartUtilities {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(0.3),
-            color.withOpacity(0.2),
+            color.withValues(alpha: 0.3),
+            color.withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.5), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.5), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -356,7 +356,7 @@ class ChartUtilities {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percentage,
-              backgroundColor: Colors.white.withOpacity(0.3),
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: 8,
             ),
@@ -393,15 +393,15 @@ class ChartUtilities {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            const Color(0xFF263238).withOpacity(0.9), // Dark blue-grey
-            const Color(0xFF37474F).withOpacity(0.8), // Medium blue-grey
+            const Color(0xFF263238).withValues(alpha: 0.9), // Dark blue-grey
+            const Color(0xFF37474F).withValues(alpha: 0.8), // Medium blue-grey
           ],
         ),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color(0xFF90A4AE), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),

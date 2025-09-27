@@ -31,7 +31,7 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
     super.initState();
     
     _backgroundController = AnimationController(
-      duration: const Duration(seconds: 15),
+      duration: const Duration(seconds: 20),
       vsync: this,
     )..repeat();
     
@@ -41,7 +41,7 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
     )..forward();
     
     _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat(reverse: true);
     
@@ -57,7 +57,7 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
       curve: Curves.elasticOut,
     ));
     
-    _pulseAnimation = Tween<double>(begin: 0.9, end: 1.0).animate(
+    _pulseAnimation = Tween<double>(begin: 0.96, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
   }
@@ -98,37 +98,38 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                transform: GradientRotation(_backgroundAnimation.value * 2 * 3.14159),
+                transform: GradientRotation(_backgroundAnimation.value * 0.3),
                 colors: const [
-                  Color(0xFF1a237e), // Deep blue
-                  Color(0xFF3949ab), // Indigo
-                  Color(0xFF5e35b1), // Deep purple
-                  Color(0xFF2e7d32), // Forest green
-                  Color(0xFF388e3c), // Green
+                  Color(0xFF0D4F3C), // Deep forest green
+                  Color(0xFF1B5E20), // Dark green
+                  Color(0xFF2E7D32), // Forest green
+                  Color(0xFF388E3C), // Medium green
+                  Color(0xFF4A5C16), // Olive green
+                  Color(0xFF33691E), // Light forest green
                 ],
               ),
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(28),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 2,
+                color: Colors.white.withValues(alpha: 0.25),
+                width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 40,
-                  offset: const Offset(0, 20),
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 30,
+                  offset: const Offset(0, 15),
                 ),
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
-                  blurRadius: 40,
-                  offset: const Offset(0, -10),
+                  color: Colors.white.withValues(alpha: 0.1),
+                  blurRadius: 30,
+                  offset: const Offset(0, -8),
                 ),
               ],
             ),
             child: Stack(
               children: [
-                // Animated particles background
-                ...List.generate(20, (index) => _buildFloatingParticle(index)),
+                // Subtle floating particles
+                ...List.generate(12, (index) => _buildFloatingParticle(index)),
                 
                 // Main content
                 SlideTransition(
@@ -170,7 +171,7 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
   }
 
   Widget _buildFloatingParticle(int index) {
-    final size = (index % 3 + 1) * 1.5;
+    final size = (index % 2 + 1) * 1.2;
     final speed = (index % 3 + 1) * 0.3;
     
     return AnimatedBuilder(
@@ -178,18 +179,18 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
       builder: (context, child) {
         final progress = (_backgroundAnimation.value * speed) % 1.0;
         return Positioned(
-          left: (index * 30) % 350,
+          left: (index * 35) % 350,
           top: 600 * progress - 50,
           child: Container(
             width: size,
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.08),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.1),
-                  blurRadius: 8,
+                  color: Colors.white.withValues(alpha: 0.05),
+                  blurRadius: 6,
                   spreadRadius: 1,
                 ),
               ],
@@ -208,17 +209,17 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.white.withOpacity(0.25),
-            Colors.white.withOpacity(0.1),
+            Colors.white.withValues(alpha: 0.18),
+            Colors.white.withValues(alpha: 0.08),
           ],
         ),
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
         ),
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.15),
             width: 1,
           ),
         ),
@@ -237,17 +238,17 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                     return Transform.scale(
                       scale: _pulseAnimation.value,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Colors.white.withOpacity(0.3),
-                              Colors.white.withOpacity(0.1),
+                              const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                              const Color(0xFF2E7D32).withValues(alpha: 0.2),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.3),
                             width: 1.5,
                           ),
                         ),
@@ -255,10 +256,10 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                           dayName,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
                             color: Colors.white,
-                            letterSpacing: 0.5,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
@@ -270,13 +271,13 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withOpacity(0.2),
-                      Colors.white.withOpacity(0.1),
+                      Colors.white.withValues(alpha: 0.15),
+                      Colors.white.withValues(alpha: 0.08),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.25),
                     width: 1,
                   ),
                 ),
@@ -285,7 +286,7 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                   icon: const Icon(
                     Icons.close_rounded,
                     color: Colors.white,
-                    size: 28,
+                    size: 26,
                   ),
                 ),
               ),
@@ -295,20 +296,20 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.15),
                 width: 1,
               ),
             ),
             child: Text(
               dateFormatted,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 color: Colors.white70,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.3,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.2,
               ),
             ),
           ),
@@ -319,113 +320,113 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
 
   Widget _buildMainWeatherSection() {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.25),
-            Colors.white.withOpacity(0.1),
+            Colors.white.withValues(alpha: 0.18),
+            Colors.white.withValues(alpha: 0.08),
           ],
         ),
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.25),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Column(
         children: [
-          // Animated weather icon
+          // Weather icon
           AnimatedBuilder(
             animation: _pulseAnimation,
             builder: (context, child) {
               return Transform.scale(
-                scale: 0.9 + (_pulseAnimation.value * 0.1),
+                scale: 0.92 + (_pulseAnimation.value * 0.08),
                 child: Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0.05),
+                        Colors.white.withValues(alpha: 0.2),
+                        Colors.white.withValues(alpha: 0.05),
                       ],
                     ),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.4),
-                      width: 2,
+                      color: Colors.white.withValues(alpha: 0.3),
+                      width: 1.5,
                     ),
                   ),
                   child: Icon(
                     WeatherIcons.getWeatherIcon(widget.forecast.weatherCode),
-                    size: 80,
+                    size: 72,
                     color: Colors.white,
                   ),
                 ),
               );
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           
           // Weather description
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.white.withOpacity(0.2),
-                  Colors.white.withOpacity(0.1),
+                  Colors.white.withValues(alpha: 0.15),
+                  Colors.white.withValues(alpha: 0.08),
                 ],
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Text(
               WeatherIcons.getWeatherDescription(widget.forecast.weatherCode),
               style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
-                letterSpacing: 0.5,
+                letterSpacing: 0.3,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
           
-          // Temperature range with premium styling
+          // Temperature range
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildTemperatureTile(
                 'High',
                 '${widget.forecast.temperatureMax.round()}°',
-                Colors.orange.withOpacity(0.3),
+                const Color(0xFFFF7043).withValues(alpha: 0.25),
                 FontWeight.w700,
               ),
               Container(
-                height: 60,
-                width: 2,
+                height: 50,
+                width: 1.5,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.white.withOpacity(0.1),
-                      Colors.white.withOpacity(0.4),
-                      Colors.white.withOpacity(0.1),
+                      Colors.white.withValues(alpha: 0.1),
+                      Colors.white.withValues(alpha: 0.3),
+                      Colors.white.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(1),
@@ -434,8 +435,8 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
               _buildTemperatureTile(
                 'Low',
                 '${widget.forecast.temperatureMin.round()}°',
-                Colors.blue.withOpacity(0.3),
-                FontWeight.w400,
+                const Color(0xFF42A5F5).withValues(alpha: 0.25),
+                FontWeight.w500,
               ),
             ],
           ),
@@ -446,19 +447,19 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
 
   Widget _buildTemperatureTile(String label, String value, Color color, FontWeight weight) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             color,
-            color.withOpacity(0.1),
+            color.withValues(alpha: 0.1),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.25),
           width: 1,
         ),
       ),
@@ -467,17 +468,17 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
           Text(
             label,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: Colors.white70,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             value,
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 28,
               fontWeight: weight,
               color: Colors.white,
             ),
@@ -492,13 +493,13 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -510,37 +511,37 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.cyan.withOpacity(0.3),
-                        Colors.cyan.withOpacity(0.1),
+                        const Color(0xFF26C6DA).withValues(alpha: 0.25),
+                        const Color(0xFF00ACC1).withValues(alpha: 0.15),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Icons.schedule,
                     color: Colors.white,
-                    size: 24,
+                    size: 20,
                   ),
                 ),
                 const SizedBox(width: 16),
                 const Text(
                   'Hourly Forecast',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
-                    letterSpacing: 0.5,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            height: 120,
+            height: 110,
             padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -552,21 +553,21 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                 final timeFormat = DateFormat('HH:mm').format(time);
                 
                 return Container(
-                  width: 80,
-                  margin: const EdgeInsets.only(right: 16),
-                  padding: const EdgeInsets.all(16),
+                  width: 75,
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white.withOpacity(0.2),
-                        Colors.white.withOpacity(0.05),
+                        Colors.white.withValues(alpha: 0.15),
+                        Colors.white.withValues(alpha: 0.05),
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -576,21 +577,21 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                       Text(
                         timeFormat,
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.white70,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       Icon(
                         WeatherIcons.getWeatherIcon(hourlyForecast.weatherCode),
-                        size: 28,
+                        size: 26,
                         color: Colors.white,
                       ),
                       Text(
                         '${hourlyForecast.temperature.round()}°',
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
@@ -607,17 +608,17 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
 
   Widget _buildAgriculturalInsightsSection() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.white.withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -627,66 +628,65 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.green.withOpacity(0.4),
-                      Colors.green.withOpacity(0.2),
+                      const Color(0xFF4CAF50).withValues(alpha: 0.3),
+                      const Color(0xFF2E7D32).withValues(alpha: 0.2),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.agriculture,
                   color: Colors.white,
-                  size: 24,
+                  size: 20,
                 ),
               ),
               const SizedBox(width: 16),
               const Expanded(
                 child: Text(
-                  'Agricultural Insights',
+                  'Farm Management Insights',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
-                    letterSpacing: 0.4,
+                    letterSpacing: 0.2,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           
-          // Creative accordion-style layout
-          _buildCollapsibleInsightCard(
+          _buildInsightCard(
             Icons.agriculture,
             'Field Operations Today',
             _getFieldConditions(widget.forecast.weatherCode),
-            Colors.green.withOpacity(0.3),
+            const Color(0xFF4CAF50).withValues(alpha: 0.25),
           ),
-          const SizedBox(height: 12),
-          _buildCollapsibleInsightCard(
+          const SizedBox(height: 10),
+          _buildInsightCard(
             Icons.water_drop,
             'Irrigation Management',
             _getIrrigationAdvice(widget.forecast.weatherCode),
-            Colors.blue.withOpacity(0.3),
+            const Color(0xFF42A5F5).withValues(alpha: 0.25),
           ),
-          const SizedBox(height: 12),
-          _buildCollapsibleInsightCard(
+          const SizedBox(height: 10),
+          _buildInsightCard(
             Icons.local_florist,
             'Crop Protection & Care',
             _getPlantCareAdvice(widget.forecast.weatherCode),
-            Colors.orange.withOpacity(0.3),
+            const Color(0xFFFF7043).withValues(alpha: 0.25),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCollapsibleInsightCard(IconData icon, String title, String description, Color color) {
+  Widget _buildInsightCard(IconData icon, String title, String description, Color color) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -694,39 +694,38 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
           end: Alignment.bottomRight,
           colors: [
             color,
-            color.withOpacity(0.1),
+            color.withValues(alpha: 0.1),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.15),
           width: 1,
         ),
       ),
       child: Column(
         children: [
-          // Header section - no Row, uses Stack for perfect positioning
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.08),
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
               ),
             ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     icon,
-                    size: 18,
+                    size: 16,
                     color: Colors.white,
                   ),
                 ),
@@ -735,30 +734,28 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
                   child: Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
-                      letterSpacing: 0.3,
+                      letterSpacing: 0.2,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ),
-          // Content section - uses flexible Container
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
+          Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
             child: Text(
               description,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.white70,
                 fontWeight: FontWeight.w400,
-                height: 1.4,
+                height: 1.3,
               ),
               textAlign: TextAlign.left,
             ),
@@ -772,35 +769,35 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
     switch (weatherCode) {
       case 0:
       case 1:
-        return 'Optimal for harvesting, tillage, and heavy machinery. Soil compaction risk low. Ideal for pesticide/herbicide application.';
+        return 'Optimal conditions for harvesting, tillage, and heavy machinery operations. Low soil compaction risk. Ideal timing for pesticide and herbicide applications.';
       case 2:
       case 3:
-        return 'Good for most field work. Monitor soil moisture before heavy equipment use. Spray operations viable until cloud increases.';
+        return 'Good conditions for most field operations. Monitor soil moisture before using heavy equipment. Spray operations viable until cloud cover increases.';
       case 45:
       case 48:
-        return 'Reduce spray operations - fog reduces effectiveness. Delay harvest if possible. Fungal disease pressure increasing.';
+        return 'Reduce spray operations due to fog reducing effectiveness. Consider delaying harvest if possible. Monitor for increased fungal disease pressure.';
       case 51:
       case 53:
       case 55:
-        return 'Light machinery only. Postpone harvest and spraying. Monitor for lodging in tall crops. Check drainage systems.';
+        return 'Light machinery only recommended. Postpone harvest and spraying operations. Monitor crops for lodging risk. Check field drainage systems.';
       case 61:
       case 63:
       case 65:
-        return 'Avoid all field operations. High soil compaction risk. Delay planting/harvest minimum 24-48hrs after rain stops.';
+        return 'Avoid all field operations due to high soil compaction risk. Delay planting or harvest for minimum 24-48 hours after rain stops.';
       case 71:
       case 73:
       case 75:
-        return 'Protect sensitive crops with row covers. Check livestock water systems. Prepare for potential crop damage assessment.';
+        return 'Protect sensitive crops with row covers. Check livestock water systems for freezing. Prepare for potential crop damage assessment.';
       case 80:
       case 81:
       case 82:
-        return 'Secure loose equipment. Check irrigation systems for damage. Monitor for soil erosion in sloped fields.';
+        return 'Secure loose equipment and materials. Check irrigation systems for potential damage. Monitor for soil erosion in sloped fields.';
       case 95:
       case 96:
       case 99:
-        return 'Emergency shelter for livestock. Inspect crops for hail damage afterward. Document damage for insurance claims.';
+        return 'Emergency shelter for livestock required. Inspect crops for hail damage post-storm. Document any damage for insurance claims.';
       default:
-        return 'Monitor local conditions closely. Consult weather radar before starting field operations. Safety first.';
+        return 'Monitor local conditions closely. Consult weather radar before starting field operations. Prioritize safety in all activities.';
     }
   }
 
@@ -808,31 +805,31 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
     switch (weatherCode) {
       case 0:
       case 1:
-        return 'Increase irrigation frequency. High evaporation rates. Check soil moisture at 6-8 inch depth. Morning irrigation preferred.';
+        return 'Increase irrigation frequency due to high evaporation rates. Check soil moisture at 6-8 inch depth. Morning irrigation is preferred.';
       case 2:
       case 3:
-        return 'Moderate irrigation needs. Monitor crop stress signs. Partial cloud cover reduces water demand by 15-20%.';
+        return 'Moderate irrigation needs expected. Monitor for crop stress signs. Partial cloud cover reduces water demand by 15-20%.';
       case 45:
       case 48:
-        return 'Reduce irrigation by 30%. High humidity reduces plant water stress. Risk of overwatering and root diseases.';
+        return 'Reduce irrigation by 30% due to high humidity reducing plant water stress. Risk of overwatering and root diseases.';
       case 51:
       case 53:
       case 55:
-        return 'Pause irrigation systems. Natural moisture provided. Resume based on soil moisture testing in 48-72 hours.';
+        return 'Pause irrigation systems temporarily. Natural moisture being provided. Resume based on soil moisture testing in 48-72 hours.';
       case 61:
       case 63:
       case 65:
-        return 'Turn off all irrigation. Expect 0.5-1.5 inches of natural water. Check soil saturation before resuming.';
+        return 'Turn off all irrigation systems. Expect 0.5-1.5 inches of natural water input. Check soil saturation before resuming operations.';
       case 71:
       case 73:
       case 75:
-        return 'Shut down irrigation to prevent freeze damage. Snow provides 0.1 inch water per inch of snow when melted.';
+        return 'Emergency shutdown of irrigation to prevent freeze damage. Snow provides approximately 0.1 inch water per inch when melted.';
       case 80:
       case 81:
       case 82:
-        return 'Emergency shutdown of irrigation systems. Check for equipment damage. Expect significant water input from storms.';
+        return 'Emergency shutdown of all irrigation systems. Check equipment for storm damage. Expect significant water input from heavy rain.';
       default:
-        return 'Monitor soil moisture levels. Adjust irrigation based on current soil conditions and crop stage requirements.';
+        return 'Monitor soil moisture levels carefully. Adjust irrigation schedules based on current soil conditions and crop growth stage.';
     }
   }
 
@@ -840,34 +837,34 @@ class _DailyWeatherModalState extends State<DailyWeatherModal>
     switch (weatherCode) {
       case 0:
       case 1:
-        return 'Monitor for heat stress in sensitive crops. Apply mulch to retain moisture. Check for pest activity increase.';
+        return 'Monitor crops for heat stress symptoms. Apply mulch to retain soil moisture. Check for increased pest activity in warm conditions.';
       case 2:
       case 3:
-        return 'Optimal growing conditions. Good time for fertilizer application. Monitor crop development stages closely.';
+        return 'Optimal growing conditions present. Good timing for fertilizer applications. Monitor crop development stages closely.';
       case 45:
       case 48:
-        return 'Increase fungicide applications. Poor air circulation promotes disease. Delay fruit/vegetable harvesting if possible.';
+        return 'Increase fungicide applications due to poor air circulation promoting disease. Consider delaying fruit and vegetable harvesting.';
       case 51:
       case 53:
       case 55:
       case 61:
       case 63:
       case 65:
-        return 'High disease pressure expected. Scout for fungal infections. Improve field drainage. Support tall crops against lodging.';
+        return 'High disease pressure expected. Scout for fungal infections regularly. Improve field drainage. Support tall crops against lodging.';
       case 71:
       case 73:
       case 75:
-        return 'Cover tender plants immediately. Move potted plants to shelter. Check antifreeze systems for livestock water.';
+        return 'Cover tender plants immediately. Move potted plants to protected areas. Check antifreeze systems for livestock water supplies.';
       case 80:
       case 81:
       case 82:
-        return 'Stake tall plants. Harvest ready crops immediately. Prepare emergency livestock shelter and secure equipment.';
+        return 'Stake tall plants for wind protection. Harvest ready crops immediately. Prepare emergency livestock shelter and secure equipment.';
       case 95:
       case 96:
       case 99:
-        return 'Emergency crop protection. Move livestock to covered areas. Prepare for hail damage assessment and replanting decisions.';
+        return 'Emergency crop protection measures needed. Move livestock to covered areas. Prepare for hail damage assessment and replanting decisions.';
       default:
-        return 'Continue regular crop monitoring. Adjust management practices based on weather patterns and crop growth stage.';
+        return 'Continue regular crop monitoring routines. Adjust management practices based on weather patterns and current crop growth stage.';
     }
   }
 }

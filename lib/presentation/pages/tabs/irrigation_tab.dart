@@ -3,7 +3,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../domain/entities/weather_entity.dart';
 import '../../../core/utils/agricultural_calculations.dart';
-import '../../../core/utils/chart_utilities.dart';
 
 class IrrigationTab extends StatelessWidget {
   final WeatherEntity weather;
@@ -23,8 +22,8 @@ class IrrigationTab extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF1B5E20).withOpacity(0.8),
-                  const Color(0xFF2E7D32).withOpacity(0.6),
+                  const Color(0xFF1B5E20).withValues(alpha: 0.8),
+                  const Color(0xFF2E7D32).withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
@@ -68,22 +67,22 @@ class IrrigationTab extends StatelessWidget {
 
   Widget _buildWaterBalanceChart() {
     return Container(
-      height: 400,
+      height: 450, // Increased height
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1B5E20).withOpacity(0.8),
-            const Color(0xFF2E7D32).withOpacity(0.6),
+            const Color(0xFF1B5E20).withValues(alpha: 0.8),
+            const Color(0xFF2E7D32).withValues(alpha: 0.6),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFF81C784), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -97,98 +96,127 @@ class IrrigationTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: 800,
-                child: BarChart(
-                  BarChartData(
-                    backgroundColor: Colors.transparent,
-                    gridData: FlGridData(
-                      show: true,
-                      drawVerticalLine: false,
-                      horizontalInterval: 5,
-                      getDrawingHorizontalLine: (value) => FlLine(
-                        color: Colors.white.withOpacity(0.3),
-                        strokeWidth: 0.8,
-                      ),
-                    ),
-                    titlesData: FlTitlesData(
-                      show: true,
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 60,
-                          interval: 1,
-                          getTitlesWidget: (value, meta) {
-                            if (value.toInt() < weather.dailyForecast.length) {
-                              final date = DateTime.parse(weather.dailyForecast[value.toInt()].date);
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 8.0),
-                                child: Transform.rotate(
-                                  angle: -0.5,
-                                  child: Text(
-                                    DateFormat('M/d').format(date),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-                            return const Text('');
-                          },
-                        ),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 60,
-                          interval: 5,
-                          getTitlesWidget: (value, meta) => Text(
-                            '${value.toInt()}mm',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Calculate responsive width based on number of data points
+                final dataPoints = weather.dailyForecast.length;
+                final minChartWidth = constraints.maxWidth;
+                // Increased spacing for better touch interaction
+                final calculatedWidth = (dataPoints * 80.0).clamp(minChartWidth, dataPoints * 120.0);
+                
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Container(
+                    width: calculatedWidth,
+                    padding: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10), // Increased padding
+                    child: BarChart(
+                      BarChartData(
+                        backgroundColor: Colors.transparent,
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          horizontalInterval: 5,
+                          getDrawingHorizontalLine: (value) => FlLine(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            strokeWidth: 0.8,
                           ),
                         ),
-                      ),
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    ),
-                    borderData: FlBorderData(
-                      show: true,
-                      border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
-                    ),
-                    minY: -20,
-                    maxY: 30,
-                    barGroups: _getWaterBalanceBarGroups(),
-                    barTouchData: BarTouchData(
-                      enabled: true,
-                      touchTooltipData: BarTouchTooltipData(
-                        getTooltipColor: (group) => Colors.white.withOpacity(0.9),
-                        getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                          if (group.x >= weather.dailyForecast.length) return null;
-                          final date = DateTime.parse(weather.dailyForecast[group.x.toInt()].date);
-                          final value = rod.toY;
-                          return BarTooltipItem(
-                            '${DateFormat('MMM d').format(date)}\n${value > 0 ? '+' : ''}${value.toStringAsFixed(1)}mm\n${value > 0 ? 'Surplus' : 'Deficit'}',
-                            const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                        titlesData: FlTitlesData(
+                          show: true,
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 60,
+                              interval: 1,
+                              getTitlesWidget: (value, meta) {
+                                if (value.toInt() < weather.dailyForecast.length) {
+                                  final date = DateTime.parse(weather.dailyForecast[value.toInt()].date);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Transform.rotate(
+                                      angle: -0.5,
+                                      child: Text(
+                                        DateFormat('M/d').format(date),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return const Text('');
+                              },
                             ),
-                          );
-                        },
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 70, // Increased reserved space
+                              interval: 5,
+                              getTitlesWidget: (value, meta) => Text(
+                                '${value.toInt()}mm',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
+                        ),
+                        minY: -25, // Added padding at bottom
+                        maxY: 35, // Added padding at top
+                        barGroups: _getWaterBalanceBarGroups(),
+                        barTouchData: BarTouchData(
+                          enabled: true,
+                          handleBuiltInTouches: true, // Important for scroll compatibility
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipPadding: const EdgeInsets.all(12), // Increased tooltip padding
+                            tooltipMargin: 16, // Added margin around tooltip
+                            fitInsideHorizontally: true, // Keep tooltip inside chart bounds
+                            fitInsideVertically: true, // Keep tooltip inside chart bounds
+                            getTooltipColor: (group) => Colors.white.withValues(alpha: 0.98), // Higher opacity for better visibility
+                            tooltipBorder: BorderSide(
+                              color: Colors.grey.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                              if (group.x >= weather.dailyForecast.length) return null;
+                              final date = DateTime.parse(weather.dailyForecast[group.x.toInt()].date);
+                              final value = rod.toY;
+                              return BarTooltipItem(
+                                '${DateFormat('MMM d').format(date)}\n${value > 0 ? '+' : ''}${value.toStringAsFixed(1)}mm\n${value > 0 ? 'Surplus' : 'Deficit'}',
+                                TextStyle(
+                                  color: value > 0 ? Colors.green : Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13, // Slightly larger text
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.black.withValues(alpha: 0.3),
+                                      offset: const Offset(0.5, 0.5),
+                                      blurRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          touchExtraThreshold: EdgeInsets.all(10), // Increased touch area
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 12),
@@ -206,15 +234,15 @@ class IrrigationTab extends StatelessWidget {
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
           colors: [
-            const Color(0xFF263238).withOpacity(0.9),
-            const Color(0xFF37474F).withOpacity(0.8),
+            const Color(0xFF263238).withValues(alpha: 0.9),
+            const Color(0xFF37474F).withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: const Color(0xFF90A4AE), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -252,7 +280,7 @@ class IrrigationTab extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
@@ -286,8 +314,8 @@ class IrrigationTab extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  totalDeficit > 0 ? const Color(0xFFB71C1C).withOpacity(0.8) : const Color(0xFF1B5E20).withOpacity(0.8),
-                  totalDeficit > 0 ? const Color(0xFFD32F2F).withOpacity(0.6) : const Color(0xFF2E7D32).withOpacity(0.6),
+                  totalDeficit > 0 ? const Color(0xFFB71C1C).withValues(alpha: 0.8) : const Color(0xFF1B5E20).withValues(alpha: 0.8),
+                  totalDeficit > 0 ? const Color(0xFFD32F2F).withValues(alpha: 0.6) : const Color(0xFF2E7D32).withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
@@ -297,7 +325,7 @@ class IrrigationTab extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -356,15 +384,15 @@ class IrrigationTab extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF0D47A1).withOpacity(0.8),
-                  const Color(0xFF1976D2).withOpacity(0.6),
+                  const Color(0xFF0D47A1).withValues(alpha: 0.8),
+                  const Color(0xFF1976D2).withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: const Color(0xFF64B5F6), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -422,15 +450,15 @@ class IrrigationTab extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1B5E20).withOpacity(0.9),
-            const Color(0xFF2E7D32).withOpacity(0.7),
+            const Color(0xFF1B5E20).withValues(alpha: 0.9),
+            const Color(0xFF2E7D32).withValues(alpha: 0.7),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFF81C784), width: 2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -462,10 +490,10 @@ class IrrigationTab extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: recommendation['color'].withOpacity(0.2),
+                color: recommendation['color'].withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: recommendation['color'].withOpacity(0.5),
+                  color: recommendation['color'].withValues(alpha: 0.5),
                   width: 1.5,
                 ),
               ),
@@ -493,7 +521,7 @@ class IrrigationTab extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: recommendation['color'].withOpacity(0.4),
+                          color: recommendation['color'].withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -527,7 +555,7 @@ class IrrigationTab extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -564,15 +592,15 @@ class IrrigationTab extends StatelessWidget {
         barRods: [
           BarChartRodData(
             toY: balance,
-            color: barColor.withOpacity(0.8),
-            width: 20,
+            color: barColor.withValues(alpha: 0.8),
+            width: 25, // Increased bar width for better touch
             borderRadius: BorderRadius.circular(6),
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: balance > 0 
-                ? [Colors.green.withOpacity(0.6), Colors.green]
-                : [Colors.red.withOpacity(0.6), Colors.red],
+                ? [Colors.green.withValues(alpha: 0.6), Colors.green]
+                : [Colors.red.withValues(alpha: 0.6), Colors.red],
             ),
           ),
         ],
