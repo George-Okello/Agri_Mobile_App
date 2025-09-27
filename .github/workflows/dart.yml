@@ -1,0 +1,47 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install Flutter (same version as your local machine)
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.4'   # <-- match local Flutter version
+
+      # Cache pub packages for faster builds
+      - name: Cache Pub packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      # Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Static analysis
+      - name: Analyze project source
+        run: flutter analyze
+
+      # Run widget/unit tests
+      - name: Run tests
+        run: flutter test --machine
+
+      # Optional: check formatting (uncomment if you want to enforce code style)
+      # - name: Verify formatting
+      #   run: flutter format --output=none --set-exit-if-changed .
